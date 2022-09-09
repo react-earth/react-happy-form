@@ -1,67 +1,32 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
+import get from 'lodash/fp/get';
+import set from 'lodash/fp/set';
+import { Path } from '../types';
 
-type RegisterOptions = {
-  native?: {
-    type: 'text' | 'select' | 'radio' | 'checkbox';
-    value?: any;
-  };
+type UseFormOptions<T> = {
+  defaultValues?: T;
 };
 
-type RegisterReturnsProps = {
-  name?: string;
-  value?: any;
-  checked?: boolean;
-  onChange?: (value: any) => void;
+export type Field = {
+  value: any;
+  onChange: (value: any) => void;
 };
+export type Form<T = any> = ReturnType<typeof useForm<T>>;
 
-export const useForm = () => {
-  const [values, setValues] = useState<any>();
+export const useForm = <T = any>(options?: UseFormOptions<T>) => {
+  const { defaultValues } = options || {};
 
-  const setValue = (path: string, value: any) => {
-    setValues((values: any) => {
-      return {
-        ...values,
-        [path]: value,
-      };
-    });
+  const [values, setValues] = useState<T | undefined>(defaultValues);
+
+  const setValue = (path: Path<T>, value: any) => {
+    setValues((values?: T) => set(path, value, values as any) as any);
   };
 
   return {
-    register: useCallback(
-      (path: string, options?: RegisterOptions) => {
-        const returnProps: RegisterReturnsProps = {};
-        if (options?.native) {
-          switch (options.native.type) {
-            case 'text':
-            case 'select':
-              returnProps.value = values?.[path] || '';
-              returnProps.onChange = (e: any) => setValue(path, e.target.value);
-              break;
-            case 'radio':
-              returnProps.name = path;
-              returnProps.checked = values?.[path] === options.native.value;
-              returnProps.onChange = () => setValue(path, options.native?.value);
-              break;
-            case 'checkbox':
-              returnProps.name = path;
-              returnProps.checked = Boolean(values?.[path]?.includes(options.native.value));
-              returnProps.onChange = () => {
-                if (returnProps.checked) {
-                  setValue(path, values?.[path].filter((value: any) => value !== options.native?.value) || []);
-                } else {
-                  setValue(path, [...(values?.[path] || []), options.native?.value]);
-                }
-              };
-              break;
-          }
-        } else {
-          returnProps.value = values?.[path];
-          returnProps.onChange = (value: any) => setValue(path, value);
-        }
-        return returnProps;
-      },
-      [values]
-    ),
+    field: (path: Path<T>): Field => ({
+      value: get(path, values as any) as any,
+      onChange: (value: any) => setValue(path, value),
+    }),
     values,
     setValue,
     setValues,
