@@ -1,6 +1,5 @@
 {
-  "name": "@react-atom/examples",
-  "version": "independent",
+  "name": "app",
   "author": "easilyjs",
   "license": "MIT",
   "private": true,
