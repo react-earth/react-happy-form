@@ -1,4 +1,4 @@
-# React Happy Form 😄
+# React Happy Form
 
 Simple, easy to use, powerful!
 
