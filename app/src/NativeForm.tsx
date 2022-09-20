@@ -1,6 +1,5 @@
 import React from 'react';
-import { radio, native, checkbox } from 'react-happy-form';
-import { useForm } from 'react-happy-form/src/hooks';
+import {radio, native, checkbox, useForm} from 'react-happy-form';
 
 type FormValues = {
   name?: string;
@@ -10,7 +9,7 @@ type FormValues = {
 };
 
 export const NativeForm = () => {
-  const { field, values } = useForm<FormValues>({
+  const {field, values} = useForm<FormValues>({
     defaultValues: {
       sex: 'male',
       access: 'public',
@@ -18,7 +17,7 @@ export const NativeForm = () => {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
       <h2>Native Form</h2>
       <input type="text" {...native(field('name'))} placeholder="enter name" />
       <div>

@@ -1,7 +1,15 @@
-import { Checkbox, FormControlLabel, FormGroup, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  TextField,
+} from '@mui/material';
 import React from 'react';
-import { native, checkbox } from 'react-happy-form';
-import { useForm } from 'react-happy-form/src/hooks';
+import {native, checkbox, useForm} from 'react-happy-form';
 
 type FormValues = {
   name?: string;
@@ -11,7 +19,7 @@ type FormValues = {
 };
 
 export const MUIForm = () => {
-  const { field, values } = useForm<FormValues>({
+  const {field, values} = useForm<FormValues>({
     defaultValues: {
       sex: 'male',
       access: 'public',
@@ -19,7 +27,7 @@ export const MUIForm = () => {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
       <h2>MUI Form</h2>
       <TextField {...native(field('name'))} placeholder="enter name" />
       <RadioGroup {...native(field('sex'))}>
@@ -27,9 +35,18 @@ export const MUIForm = () => {
         <FormControlLabel value="female" control={<Radio />} label="Female" />
       </RadioGroup>
       <FormGroup>
-        <FormControlLabel control={<Checkbox {...checkbox(field('hobbies'), 'swimming')} />} label="Swimming" />
-        <FormControlLabel control={<Checkbox {...checkbox(field('hobbies'), 'running')} />} label="Running" />
-        <FormControlLabel control={<Checkbox {...checkbox(field('hobbies'), 'basketball')} />} label="Basketball" />
+        <FormControlLabel
+          control={<Checkbox {...checkbox(field('hobbies'), 'swimming')} />}
+          label="Swimming"
+        />
+        <FormControlLabel
+          control={<Checkbox {...checkbox(field('hobbies'), 'running')} />}
+          label="Running"
+        />
+        <FormControlLabel
+          control={<Checkbox {...checkbox(field('hobbies'), 'basketball')} />}
+          label="Basketball"
+        />
       </FormGroup>
       <Select {...native(field('access'))}>
         <MenuItem value="public">Public</MenuItem>
