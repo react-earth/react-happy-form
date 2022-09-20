@@ -8,14 +8,21 @@
 
 Simple, easy to use, powerful!
 
-Visit https://react.earth/react-happy-form for docs, guides, API and more!
-
 <a href="https://npmjs.com/package/react-happy-form" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/react-happy-form.svg" />
 </a>
 <a href="https://npmjs.com/package/react-happy-form" target="\_parent">
   <img alt="" src="https://img.shields.io/github/stars/react-earth/react-happy-form.svg?style=social&label=Star" />
 </a>
+
+# Quick Features
+
+- Typed form state path, making code more robust.
+- Generic form api, compatible with third-party UI libraries.
+- Nested form state management.
+- No dependencies, very small package size.
+
+Visit https://react.earth/react-happy-form for docs, guides, API and more!
 
 # Contributors ✨
 
