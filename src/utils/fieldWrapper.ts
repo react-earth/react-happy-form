@@ -1,7 +1,8 @@
-import { Field } from '../hooks';
+import {Field} from '../hooks';
 
 export const native = (field: Field, defaultValue?: any) => {
   return {
+    ...field,
     value: field.value ?? defaultValue ?? '',
     // use any to support custom native like event
     onChange: (event: any) => {

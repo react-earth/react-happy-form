@@ -1,5 +1,14 @@
 import React from 'react';
 import {radio, native, checkbox, useForm} from 'react-happy-form';
+import {yupValidator} from 'react-happy-form-yup';
+import * as y from 'yup';
+
+const formSchema = y.object({
+  name: y.string().required(),
+  sex: y.string().required(),
+  hobbies: y.array().min(1).required(),
+  access: y.string().required(),
+});
 
 type FormValues = {
   name?: string;
@@ -9,11 +18,12 @@ type FormValues = {
 };
 
 export const NativeForm = () => {
-  const {field, values} = useForm<FormValues>({
+  const {field, values, errors, submit} = useForm<FormValues>({
     defaultValues: {
       sex: 'male',
       access: 'public',
     },
+    validate: yupValidator(formSchema),
   });
 
   return (
@@ -48,7 +58,9 @@ export const NativeForm = () => {
         <option value="public">Public</option>
         <option value="private">Private</option>
       </select>
+      <button onClick={submit}>submit</button>
       <div>{JSON.stringify(values)}</div>
+      <div>errors: {JSON.stringify(errors, null, 2)}</div>
     </div>
   );
 };
