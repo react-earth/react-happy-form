@@ -1,8 +1,9 @@
-# React Happy Form
+# React Happy Form 😄
 
 Simple, easy to use, powerful!
 
-</a>
+Visit https://react.earth/react-happy-form for docs, guides, API and more!
+
 <a href="https://npmjs.com/package/react-happy-form" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/react-happy-form.svg" />
 </a>
