@@ -11,10 +11,11 @@
 
 - Typed form state path, making code more robust.
 - Generic form api, compatible with third-party UI libraries.
+- Support validation, compatible with third-party validation libraries.
 - Nested form state management.
 - No dependencies, very small package size.
 
-Visit https://react.earth/react-happy-form for docs, guides, API and more!
+Visit https://react-happy-form.onrender.com/ for preview!
 
 # Contributors ✨
 
