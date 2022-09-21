@@ -7,7 +7,7 @@
   <img alt="start" src="https://img.shields.io/github/stars/react-earth/react-happy-form.svg?style=social&label=Star" />
 </a>
 
-# Quick Features
+# Quick Features 🥳
 
 - Typed form state path, making code more robust.
 - Generic form api, compatible with third-party UI libraries.
