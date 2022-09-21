@@ -1,6 +1,5 @@
 import React from 'react';
-import { radio, native, checkbox } from 'react-happy-form';
-import { useForm } from 'react-happy-form/src/hooks';
+import { radio, native, checkbox, useForm } from 'react-happy-form';
 
 type FormValues = {
   name?: string;

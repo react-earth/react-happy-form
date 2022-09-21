@@ -1,7 +1,6 @@
 import { Checkbox, FormControlLabel, FormGroup, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
 import React from 'react';
-import { native, checkbox } from 'react-happy-form';
-import { useForm } from 'react-happy-form/src/hooks';
+import { native, checkbox, useForm } from 'react-happy-form';
 
 type FormValues = {
   name?: string;

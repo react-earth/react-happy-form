@@ -1,7 +1,6 @@
 {
   "include": ["./src"],
   "compilerOptions": {
-    "baseUrl": ".",
     "module": "esnext",
     "target": "es5",
     "lib": ["es2020", "dom"],
