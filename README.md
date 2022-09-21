@@ -15,7 +15,7 @@
 - Nested form state management.
 - No dependencies, very small package size.
 
-Visit https://react-happy-form.onrender.com/ for preview!
+Visit https://react-happy-form.onrender.com for preview!
 
 # Contributors ✨
 
