@@ -67,7 +67,7 @@ export const set = <T extends { [k: string]: any }>(
   value: any
 ) => {
   const paths: string[] = isKey(path) ? [path] : stringToPath(path);
-  return defaultObject == null ? defaultObject :  setPropertyValue(defaultObject, paths, value);
+  return defaultObject === null ? defaultObject :  setPropertyValue(defaultObject, paths, value);
 };
 function setPropertyValue(
   object: { [k: string]: any } = {},
@@ -117,7 +117,7 @@ export const get = <T extends {}>(
 ) => {
   const paths: string[] = isKey(path) ? [path] : stringToPath(path);
   const result =
-    defaultObject == null ? undefined : getPropertyValue(defaultObject, paths);
+    defaultObject === null ? undefined : getPropertyValue(defaultObject, paths);
   return result === undefined ? defaultValue : result;
 };
 
