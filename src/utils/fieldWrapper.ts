@@ -1,8 +1,12 @@
-import { Field } from '../hooks';
+import { FormField } from '../types';
 
-export const native = (field: Field, defaultValue?: any) => {
+type NativeOptions = {
+  defaultValue?: any;
+};
+export const native = (field: FormField, options?: NativeOptions) => {
   return {
-    value: field.value ?? defaultValue ?? '',
+    ...field,
+    value: field.value ?? options?.defaultValue ?? '',
     // use any to support custom native like event
     onChange: (event: any) => {
       field.onChange(event.target.value);
@@ -10,8 +14,10 @@ export const native = (field: Field, defaultValue?: any) => {
   };
 };
 
-export const radio = (field: Field, value: any) => {
+export const radio = (field: FormField, value: any) => {
   return {
+    ...field,
+    value: undefined,
     checked: field.value === value,
     onChange: () => {
       field.onChange(value);
@@ -19,13 +25,19 @@ export const radio = (field: Field, value: any) => {
   };
 };
 
-export const checkbox = (field: Field, value: any) => {
-  const formValue: any[] = field.value || [];
-  const checked = formValue.includes(value);
+export const checkbox = (field: FormField, value: any) => {
+  const fieldValue: any[] = field.value || [];
+  const checked = fieldValue.includes(value);
   return {
+    ...field,
+    value: undefined,
     checked,
     onChange: () => {
-      field.onChange(checked ? formValue.filter((item) => item !== value) : [...formValue, value]);
+      field.onChange(
+        checked
+          ? fieldValue.filter((item) => item !== value)
+          : [...fieldValue, value],
+      );
     },
   };
 };
