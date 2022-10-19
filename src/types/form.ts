@@ -5,4 +5,4 @@ export type FormField = {
   error: any;
 };
 
-export type FormErrors = { [key: string]: any };
+export type FormErrors<T> = Partial<Record<keyof T, string>>;
