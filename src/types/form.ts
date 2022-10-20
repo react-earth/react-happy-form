@@ -1,3 +1,5 @@
+import { Path } from './path';
+
 export type FormField = {
   value: any;
   onChange: (value: any) => void;
@@ -5,4 +7,6 @@ export type FormField = {
   error: any;
 };
 
-export type FormErrors<T> = Partial<Record<keyof T, string>>;
+export type FormErrors<T> = {
+  [K in Path<T>]?: any;
+};

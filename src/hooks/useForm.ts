@@ -4,7 +4,7 @@ import { set, get } from '../utils';
 
 type UseFormOptions<T extends object> = {
   defaultValues?: T;
-  validate?: (values: T) => PromiseAble<FormErrors>;
+  validate?: (values: T) => PromiseAble<FormErrors<T>>;
 };
 
 export const useForm = <T extends object = any>(
@@ -14,7 +14,7 @@ export const useForm = <T extends object = any>(
 
   const [formState, setFormState] = useState({
     values: defaultValues ?? ({} as T),
-    errors: {} as FormErrors,
+    errors: {} as FormErrors<T>,
     touched: [] as Path<T>[],
     isSubmitted: false,
     isSubmitting: false,
@@ -50,7 +50,7 @@ export const useForm = <T extends object = any>(
       return { ...formState, errors: newErrors };
     });
   };
-  const setErrors = (errors: FormErrors) => {
+  const setErrors = (errors: FormErrors<T>) => {
     setFormState((formState) => {
       return { ...formState, errors };
     });
@@ -73,7 +73,7 @@ export const useForm = <T extends object = any>(
         if (formState.isSubmitted) {
           setErrors(errors);
         } else {
-          const touchedErrors: FormErrors = {};
+          const touchedErrors: FormErrors<T> = {};
           formState.touched.forEach((path) => {
             const pathError = get(errors, path);
             if (pathError) {
