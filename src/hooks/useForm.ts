@@ -1,10 +1,20 @@
 import { useEffect, useState } from 'react';
 import { FormErrors, FormField, Path, PromiseAble } from '../types';
 import { set, get } from '../utils';
+import { createValidator } from '../validator/createValidator';
 
 type UseFormOptions<T extends object> = {
   defaultValues?: T;
-  validate?: (values: T) => PromiseAble<FormErrors>;
+  validate?:
+    | ((values: T) => PromiseAble<FormErrors>)
+    | Record<
+        keyof T,
+        ((
+          value: any,
+          field: string,
+          form: any,
+        ) => PromiseAble<string | undefined>)[]
+      >;
 };
 
 export const useForm = <T extends object = any>(
@@ -69,7 +79,13 @@ export const useForm = <T extends object = any>(
   useEffect(() => {
     (async () => {
       if (validate && (formState.isSubmitted || formState.touched.length > 0)) {
-        const errors = await validate(formState.values);
+        const localValidate =
+          typeof validate === 'object'
+            ? createValidator(validate).validate
+            : validate;
+
+        const errors = await localValidate(formState.values);
+
         if (formState.isSubmitted) {
           setErrors(errors);
         } else {
@@ -86,12 +102,16 @@ export const useForm = <T extends object = any>(
     })();
   }, [formState.isSubmitted, formState.touched, formState.values]);
 
-  const handelSubmit =
+  const handleSubmit =
     (onSubmit: (values: T) => PromiseAble<void>) => async () => {
       console.log(1);
       try {
         setIsSubmitting(true);
-        const errors = (await validate?.(formState.values)) || {};
+        const localValidate =
+          typeof validate === 'object'
+            ? createValidator(validate).validate
+            : validate;
+        const errors = (await localValidate?.(formState.values)) || {};
         setErrors(errors);
         if (Object.keys(errors).length === 0) {
           await onSubmit(formState.values);
@@ -119,7 +139,7 @@ export const useForm = <T extends object = any>(
     setErrors,
     setIsSubmitted,
     setIsSubmitting,
-    handelSubmit,
+    handleSubmit,
   };
 };
 

@@ -33,26 +33,38 @@ type FormValues = {
   hobbies?: string[];
   privacy?: string;
 };
-
+const require = (value: any, field: any, form: any) => {
+  if ((Array.isArray(value) && value.length == 0) || !value) {
+    return `the ${field} is empty`;
+  }
+};
 export const Example = () => {
   const form = useForm<FormValues>({
     defaultValues: {
       sex: 'male',
       privacy: 'public',
+      name: '',
+      hobbies: [],
     },
-    validate: (values) => {
-      const errors: FormErrors = {};
-      if (!values.name) {
-        errors.name = 'Please enter your name';
-      }
-      if (!values.hobbies || values.hobbies.length === 0) {
-        errors.hobbies = 'Please select hobbies';
-      }
-      return errors;
+    // validate: (values) => {
+    //   const errors: FormErrors = {};
+    //   if (!values.name) {
+    //     errors.name = 'Please enter your name';
+    //   }
+    //   if (!values.hobbies || values.hobbies.length === 0) {
+    //     errors.hobbies = 'Please select hobbies';
+    //   }
+    //   return errors;
+    // },
+    validate: {
+      sex: [require],
+      name: [require],
+      hobbies: [require],
+      privacy: [require],
     },
   });
   const [isShowToast, setIsShowToast] = useState(false);
-  const { field, errors, isSubmitting, handelSubmit } = form;
+  const { field, errors, isSubmitting, handleSubmit } = form;
 
   const onSubmit = async (values: FormValues) => {
     await new Promise((resolve) => {
@@ -147,7 +159,7 @@ export const Example = () => {
               <LoadingButton
                 variant="contained"
                 loading={isSubmitting}
-                onClick={handelSubmit(onSubmit)}
+                onClick={handleSubmit(onSubmit)}
               >
                 Submit
               </LoadingButton>
