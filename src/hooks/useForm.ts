@@ -45,9 +45,7 @@ export const useForm = <T extends object = any>(
   const getError = (path: Path<T>) => get(formState.errors, path);
   const setError = (path: Path<T>, error: any) => {
     setFormState((formState) => {
-      const newErrors = { ...formState.errors };
-      set(newErrors, path, error);
-      return { ...formState, errors: newErrors };
+      return { ...formState, [path]: error };
     });
   };
   const setErrors = (errors: FormErrors<T>) => {
@@ -74,10 +72,9 @@ export const useForm = <T extends object = any>(
           setErrors(errors);
         } else {
           const touchedErrors: FormErrors<T> = {};
-          formState.touched.forEach((path) => {
-            const pathError = get(errors, path);
-            if (pathError) {
-              set(touchedErrors, path, pathError);
+          formState.touched.forEach((touchedPath) => {
+            if (errors[touchedPath]) {
+              touchedErrors[touchedPath] = errors[touchedPath];
             }
           });
           setErrors(touchedErrors);
@@ -88,7 +85,6 @@ export const useForm = <T extends object = any>(
 
   const handelSubmit =
     (onSubmit: (values: T) => PromiseAble<void>) => async () => {
-      console.log(1);
       try {
         setIsSubmitting(true);
         const errors = (await validate?.(formState.values)) || {};
@@ -108,7 +104,6 @@ export const useForm = <T extends object = any>(
       value: getValue(path),
       onChange: (value: any) => setValue(path, value),
       onBlur: () => touch(path),
-      error: getError(path),
     }),
     getValue,
     setValue,
