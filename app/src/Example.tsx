@@ -41,7 +41,7 @@ export const Example = () => {
       privacy: 'public',
     },
     validate: (values) => {
-      const errors: FormErrors = {};
+      const errors: FormErrors<FormValues> = {};
       if (!values.name) {
         errors.name = 'Please enter your name';
       }

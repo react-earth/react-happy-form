@@ -4,7 +4,7 @@ import { set, get } from '../utils';
 
 type UseFormOptions<T extends object> = {
   defaultValues?: T;
-  validate?: (values: T) => PromiseAble<FormErrors>;
+  validate?: (values: T) => PromiseAble<FormErrors<T>>;
 };
 
 export const useForm = <T extends object = any>(
@@ -14,7 +14,7 @@ export const useForm = <T extends object = any>(
 
   const [formState, setFormState] = useState({
     values: defaultValues ?? ({} as T),
-    errors: {} as FormErrors,
+    errors: {} as FormErrors<T>,
     touched: [] as Path<T>[],
     isSubmitted: false,
     isSubmitting: false,
@@ -45,12 +45,10 @@ export const useForm = <T extends object = any>(
   const getError = (path: Path<T>) => get(formState.errors, path);
   const setError = (path: Path<T>, error: any) => {
     setFormState((formState) => {
-      const newErrors = { ...formState.errors };
-      set(newErrors, path, error);
-      return { ...formState, errors: newErrors };
+      return { ...formState, [path]: error };
     });
   };
-  const setErrors = (errors: FormErrors) => {
+  const setErrors = (errors: FormErrors<T>) => {
     setFormState((formState) => {
       return { ...formState, errors };
     });
@@ -68,16 +66,15 @@ export const useForm = <T extends object = any>(
 
   useEffect(() => {
     (async () => {
-      if (validate && (formState.isSubmitted || formState.touched.length > 0)) {
+      if (validate) {
         const errors = await validate(formState.values);
         if (formState.isSubmitted) {
           setErrors(errors);
         } else {
-          const touchedErrors: FormErrors = {};
-          formState.touched.forEach((path) => {
-            const pathError = get(errors, path);
-            if (pathError) {
-              set(touchedErrors, path, pathError);
+          const touchedErrors: FormErrors<T> = {};
+          formState.touched.forEach((touchedPath) => {
+            if (errors[touchedPath]) {
+              touchedErrors[touchedPath] = errors[touchedPath];
             }
           });
           setErrors(touchedErrors);
@@ -88,7 +85,6 @@ export const useForm = <T extends object = any>(
 
   const handelSubmit =
     (onSubmit: (values: T) => PromiseAble<void>) => async () => {
-      console.log(1);
       try {
         setIsSubmitting(true);
         const errors = (await validate?.(formState.values)) || {};
@@ -108,7 +104,6 @@ export const useForm = <T extends object = any>(
       value: getValue(path),
       onChange: (value: any) => setValue(path, value),
       onBlur: () => touch(path),
-      error: getError(path),
     }),
     getValue,
     setValue,
