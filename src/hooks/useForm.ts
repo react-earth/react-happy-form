@@ -66,7 +66,7 @@ export const useForm = <T extends object = any>(
 
   useEffect(() => {
     (async () => {
-      if (validate && (formState.isSubmitted || formState.touched.length > 0)) {
+      if (validate) {
         const errors = await validate(formState.values);
         if (formState.isSubmitted) {
           setErrors(errors);
