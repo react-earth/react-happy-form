@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  native,
-  checkbox,
-  useForm,
-  FormErrors,
-  FormProvider,
-} from 'react-happy-form';
+import { native, useForm, FormErrors, FormProvider } from 'react-happy-form';
 import {
   Alert,
   Box,
@@ -114,19 +108,34 @@ export const Example = () => {
               <FormGroup row>
                 <FormControlLabel
                   control={
-                    <Checkbox {...checkbox(field('hobbies'), 'swimming')} />
+                    <Checkbox
+                      {...native(field('hobbies'), {
+                        type: 'checkbox',
+                        value: 'swimming',
+                      })}
+                    />
                   }
                   label="Swimming"
                 />
                 <FormControlLabel
                   control={
-                    <Checkbox {...checkbox(field('hobbies'), 'running')} />
+                    <Checkbox
+                      {...native(field('hobbies'), {
+                        type: 'checkbox',
+                        value: 'running',
+                      })}
+                    />
                   }
                   label="Running"
                 />
                 <FormControlLabel
                   control={
-                    <Checkbox {...checkbox(field('hobbies'), 'basketball')} />
+                    <Checkbox
+                      {...native(field('hobbies'), {
+                        type: 'checkbox',
+                        value: 'basketball',
+                      })}
+                    />
                   }
                   label="Basketball"
                 />
