@@ -45,7 +45,7 @@ export const useForm = <T extends object = any>(
   const getError = (path: Path<T>) => get(formState.errors, path);
   const setError = (path: Path<T>, error: any) => {
     setFormState((formState) => {
-      return { ...formState, [path]: error };
+      return { ...formState, errors: { ...formState.errors, [path]: error } };
     });
   };
   const setErrors = (errors: FormErrors<T>) => {
@@ -83,7 +83,7 @@ export const useForm = <T extends object = any>(
     })();
   }, [formState.isSubmitted, formState.touched, formState.values]);
 
-  const handelSubmit =
+  const handleSubmit =
     (onSubmit: (values: T) => PromiseAble<void>) => async () => {
       try {
         setIsSubmitting(true);
@@ -93,6 +93,7 @@ export const useForm = <T extends object = any>(
           await onSubmit(formState.values);
         }
       } finally {
+        // todo: if the onSubmit is not call, is the isSubmitted should be false?
         setIsSubmitted(true);
         setIsSubmitting(false);
       }
@@ -114,7 +115,7 @@ export const useForm = <T extends object = any>(
     setErrors,
     setIsSubmitted,
     setIsSubmitting,
-    handelSubmit,
+    handleSubmit,
   };
 };
 
