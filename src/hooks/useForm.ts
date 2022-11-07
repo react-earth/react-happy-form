@@ -93,7 +93,6 @@ export const useForm = <T extends object = any>(
           await onSubmit(formState.values);
         }
       } finally {
-        // todo: if the onSubmit is not call, is the isSubmitted should be false?
         setIsSubmitted(true);
         setIsSubmitting(false);
       }

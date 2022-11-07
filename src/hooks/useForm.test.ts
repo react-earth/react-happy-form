@@ -8,9 +8,9 @@ function renderUseForm(validate?: (value: any) => any) {
       validate,
       defaultValues: {
         name: 'name',
-        age: 18,
-        hobbies: ['cycle', 'swimming'],
-        transaction: {
+        size: 34,
+        color: ['red', 'white'],
+        salesPromotion: {
           start: new Date(),
           end: new Date(),
         },
@@ -22,8 +22,8 @@ describe('useForm', () => {
   it('we can get value by path', () => {
     const { result } = renderUseForm();
     const { getValue } = result.current;
-    expect(getValue('age')).toBe(18);
-    expect(getValue('transaction.end')).toBeInstanceOf(Date);
+    expect(getValue('size')).toBe(34);
+    expect(getValue('salesPromotion.end')).toBeInstanceOf(Date);
   });
   it('we can set property by setValue method', () => {
     const { result } = renderUseForm();
@@ -31,9 +31,9 @@ describe('useForm', () => {
 
     const currentDate = new Date();
     act(() => {
-      setValue('transaction.end', currentDate);
+      setValue('salesPromotion.end', currentDate);
     });
-    expect(result.current.values.transaction.end).toBe(currentDate);
+    expect(result.current.values.salesPromotion.end).toBe(currentDate);
   });
   it('we can set multiple properties by use setValues method', () => {
     const { result } = renderUseForm();
@@ -41,13 +41,15 @@ describe('useForm', () => {
 
     const values = {
       name: 'test name',
-      age: 20,
-      hobbies: ['test1', 'test2'],
+      size: 20,
+      color: ['yellow', 'red'],
+      salesPromotion: {
+        start: new Date(),
+        end: new Date(),
+      },
     };
     act(() => {
-      // todo: should we can make those property optional?
-      // i prefer to provider a option: merge/replace(default)
-      setValues(values as any);
+      setValues(values);
     });
     expect(result.current.values).toBe(values);
   });
@@ -57,9 +59,9 @@ describe('useForm', () => {
 
     act(() => {
       touch('name');
-      touch('transaction');
+      touch('salesPromotion');
     });
-    expect(result.current.touched).toStrictEqual(['name', 'transaction']);
+    expect(result.current.touched).toStrictEqual(['name', 'salesPromotion']);
   });
   it('we can set a single error message by setError method', () => {
     const { result } = renderUseForm();
@@ -67,9 +69,9 @@ describe('useForm', () => {
 
     const errorMsg = 'this field is required';
     act(() => {
-      setError('age', errorMsg);
+      setError('size', errorMsg);
     });
-    expect(result.current.errors['age']).toBe(errorMsg);
+    expect(result.current.errors['size']).toBe(errorMsg);
   });
   it('we can set multiple error messages by setErrors method', () => {
     const { result } = renderUseForm();
@@ -139,7 +141,7 @@ describe('useForm', () => {
     const { result } = renderUseForm();
     const { field } = result.current;
 
-    expect(field('transaction.end')).toMatchObject({
+    expect(field('salesPromotion.end')).toMatchObject({
       value: expect.any(Date),
       onChange: expect.any(Function),
       onBlur: expect.any(Function),
