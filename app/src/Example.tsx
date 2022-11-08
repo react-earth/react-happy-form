@@ -46,7 +46,7 @@ export const Example = () => {
     },
   });
   const [isShowToast, setIsShowToast] = useState(false);
-  const { field, errors, isSubmitting, handelSubmit } = form;
+  const { field, errors, isSubmitting, handleSubmit } = form;
 
   const onSubmit = async (values: FormValues) => {
     await new Promise((resolve) => {
@@ -156,7 +156,7 @@ export const Example = () => {
               <LoadingButton
                 variant="contained"
                 loading={isSubmitting}
-                onClick={handelSubmit(onSubmit)}
+                onClick={handleSubmit(onSubmit)}
               >
                 Submit
               </LoadingButton>
