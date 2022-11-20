@@ -1,10 +1,13 @@
 ![title](media/repo-header.svg)
 
 <a href="https://npmjs.com/package/react-happy-form" target="\_parent">
+  <img alt="star" src="https://img.shields.io/github/stars/react-earth/react-happy-form.svg?style=social&label=Star" />
+</a>
+<a href="https://npmjs.com/package/react-happy-form" target="\_parent">
   <img alt="downloads" src="https://img.shields.io/npm/dm/react-happy-form.svg" />
 </a>
 <a href="https://npmjs.com/package/react-happy-form" target="\_parent">
-  <img alt="start" src="https://img.shields.io/github/stars/react-earth/react-happy-form.svg?style=social&label=Star" />
+  <img alt="minzip" src="https://img.shields.io/bundlephobia/minzip/react-happy-form" />
 </a>
 
 # Quick Features 🥳
