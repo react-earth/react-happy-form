@@ -23,8 +23,8 @@
     "app-install": "npm --prefix=app install",
     "app-start": "npm --prefix=app start",
     "app-build": "npm --prefix=app run build",
-    "test": "jest --collect-coverage",
-    "e2e":"cypress open"
+    "test": "jest",
+    "e2e": "cypress run"
   },
   "peerDependencies": {
     "react": ">=16.0.0"
