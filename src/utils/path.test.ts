@@ -37,7 +37,7 @@ describe('utils/path', () => {
   it('path get correctly', () => {
     expect(get(OBJ, 'parent.value')).toEqual(1);
     expect(get(OBJ, 'parent.numberKeyObject."0"')).toEqual(1);
-    expect(get(OBJ, 'parent.array.0')).toEqual(2);
+    expect(get(OBJ, 'parent.array.0')).toEqual(1);
   });
 
   it('path set correctly', () => {
