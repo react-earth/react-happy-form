@@ -10,7 +10,7 @@
   <img alt="minzip" src="https://img.shields.io/bundlephobia/minzip/react-happy-form" />
 </a>
 <a href="https://github.com/react-earth/react-happy-form" target="\_parent">
-  <img alt="tests" src="https://img.shields.io/badge/ tests-unit & e2e tests-blueviolet" />
+  <img alt="tests" src="https://img.shields.io/badge/ tests-unit & e2e-blueviolet" />
 </a>
 <a href="https://github.com/react-earth/react-happy-form" target="\_parent">
   <img alt="license" src="https://img.shields.io/npm/l/react-happy-form" />
