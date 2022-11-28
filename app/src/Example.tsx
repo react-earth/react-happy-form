@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { native, useForm, FormErrors, FormProvider } from 'react-happy-form';
 import {
-  Alert,
   Box,
-  Checkbox,
   Container,
+  Flex,
+  Heading,
+  Spacer,
   FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormHelperText,
+  Input,
   FormLabel,
-  MenuItem,
-  Radio,
   RadioGroup,
+  Stack,
+  Radio,
+  CheckboxGroup,
+  Checkbox,
   Select,
-  TextField,
-  Typography,
-  Snackbar,
-} from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+  Button,
+  useToast,
+  FormErrorMessage,
+} from '@chakra-ui/react';
 import { FormStatePreview } from './FormStatePreview';
 
-type FormValues = {
+export type ExampleFormValues = {
   name?: string;
   sex?: string;
   hobbies?: string[];
@@ -29,158 +29,110 @@ type FormValues = {
 };
 
 export const Example = () => {
-  const form = useForm<FormValues>({
+  const form = useForm<ExampleFormValues>({
     defaultValues: {
       sex: 'male',
       privacy: 'public',
     },
     validate: (values) => {
-      const errors: FormErrors<FormValues> = new Map();
+      const errors: FormErrors<ExampleFormValues> = new Map();
       if (!values.name) {
-        errors.set('name', 'Please enter your name');
+        errors.set('name', 'Name is required');
       }
       if (!values.hobbies || values.hobbies.length === 0) {
-        errors.set('hobbies', 'Please select your hobbies');
+        errors.set('hobbies', 'Hobbies is required');
       }
       return errors;
     },
   });
-  const { field, isSubmitting, handleSubmit, getError } = form;
-  const [isShowToast, setIsShowToast] = useState(false);
+  const { field, isSubmitting, handleSubmit, hasError, getError } = form;
+  const toast = useToast();
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: ExampleFormValues) => {
+    // wait 1s for submitting
     await new Promise((resolve) => {
       setTimeout(() => {
         resolve(undefined);
       }, 1000);
     });
-    setIsShowToast(true);
+    toast({
+      title: 'Form submit successfully!',
+      position: 'top',
+      status: 'success',
+    });
   };
 
   return (
     <FormProvider value={form}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Container
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 32,
-            padding: 16,
-          }}
-        >
-          <Box style={{ width: 500 }}>
-            <Typography variant="h4">React Happy Form</Typography>
-            <Box
-              style={{
-                marginTop: 16,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 16,
-              }}
-            >
-              <FormControl error={Boolean(getError('name'))}>
-                <FormLabel required>Name</FormLabel>
-                <TextField
-                  {...native(field('name'))}
-                  error={Boolean(getError('name'))}
-                  placeholder="enter name"
-                />
-                {getError('name') && (
-                  <FormHelperText error>{getError('name')}</FormHelperText>
-                )}
-              </FormControl>
-              <FormControl>
-                <FormLabel required>Sex</FormLabel>
-                <RadioGroup {...native(field('sex'))} row>
-                  <FormControlLabel
-                    value="male"
-                    control={<Radio />}
-                    label="Male"
+      <Container maxW="container.lg">
+        <Spacer h="12" />
+        <Flex gap="12">
+          <Box flex="1">
+            <Heading fontSize="3xl">React Happy Form</Heading>
+            <Spacer h="6" />
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Stack gap="4">
+                <FormControl isRequired isInvalid={hasError('name')}>
+                  <FormLabel>Name</FormLabel>
+                  <Input
+                    {...native(field('name'))}
+                    placeholder="Please enter your name"
+                    required={false}
                   />
-                  <FormControlLabel
-                    value="female"
-                    control={<Radio />}
-                    label="Female"
-                  />
-                </RadioGroup>
-              </FormControl>
-              <FormControl error={Boolean(getError('hobbies'))}>
-                <FormLabel required>Hobbies</FormLabel>
-                <FormGroup row>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        {...native(field('hobbies'), {
-                          type: 'checkbox',
-                          value: 'swimming',
-                        })}
-                      />
-                    }
-                    label="Swimming"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        {...native(field('hobbies'), {
-                          type: 'checkbox',
-                          value: 'running',
-                        })}
-                      />
-                    }
-                    label="Running"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        {...native(field('hobbies'), {
-                          type: 'checkbox',
-                          value: 'basketball',
-                        })}
-                      />
-                    }
-                    label="Basketball"
-                  />
-                </FormGroup>
-                {getError('hobbies') && (
-                  <FormHelperText error>{getError('hobbies')}</FormHelperText>
-                )}
-              </FormControl>
-              <FormControl>
-                <FormLabel required>Privacy</FormLabel>
-                <Select {...native(field('privacy'))}>
-                  <MenuItem value="public">Everyone can view</MenuItem>
-                  <MenuItem value="friends">Your friends can view</MenuItem>
-                  <MenuItem value="private">Only your can view</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl>
-                <LoadingButton
-                  variant="contained"
-                  loading={isSubmitting}
+                  <FormErrorMessage>{getError('name')}</FormErrorMessage>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Sex</FormLabel>
+                  <RadioGroup {...field('sex')}>
+                    <Stack direction="row" gap="2">
+                      <Radio value="male">Male</Radio>
+                      <Radio value="female">Female</Radio>
+                    </Stack>
+                  </RadioGroup>
+                </FormControl>
+                <FormControl isRequired isInvalid={hasError('hobbies')}>
+                  <FormLabel>Hobbies</FormLabel>
+                  <CheckboxGroup {...field('hobbies')}>
+                    <Stack direction="row" gap="2">
+                      <Checkbox value="swimming" required={false}>
+                        Swimming
+                      </Checkbox>
+                      <Checkbox value="running" required={false}>
+                        Running
+                      </Checkbox>
+                      <Checkbox value="basketball" required={false}>
+                        Basketball
+                      </Checkbox>
+                    </Stack>
+                  </CheckboxGroup>
+                  <FormErrorMessage>{getError('hobbies')}</FormErrorMessage>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Privacy</FormLabel>
+                  <Select {...native(field('privacy'))}>
+                    <option value="public">Everyone can view</option>
+                    <option value="friends">Your friends can view</option>
+                    <option value="private">Only your can view</option>
+                  </Select>
+                </FormControl>
+                <Button
+                  isLoading={isSubmitting}
+                  loadingText="Submitting"
+                  colorScheme="green"
                   type="submit"
-                  // onClick={handleSubmit(onSubmit)}
                 >
                   Submit
-                </LoadingButton>
-              </FormControl>
-            </Box>
+                </Button>
+              </Stack>
+            </form>
           </Box>
-          <Box style={{ width: 400 }}>
-            <Typography variant="h4">State</Typography>
-            <Box style={{ marginTop: 16 }}>
-              <FormStatePreview />
-            </Box>
+          <Box flex="1">
+            <Heading fontSize="3xl">Form State Preview</Heading>
+            <Spacer h="6" />
+            <FormStatePreview />
           </Box>
-        </Container>
-        <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          open={isShowToast}
-          autoHideDuration={2000}
-          onClose={() => setIsShowToast(false)}
-        >
-          <Alert severity="success">Form Submit Successfully!</Alert>
-        </Snackbar>
-      </form>
+        </Flex>
+      </Container>
     </FormProvider>
   );
 };
