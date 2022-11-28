@@ -43,6 +43,7 @@ export const useForm = <T extends object = any>(
     });
   };
   const getError = (path: Path<T>) => formState.errors.get(path);
+  const hasError = (path: Path<T>) => Boolean(getError(path));
   const setError = (path: Path<T>, error?: any) => {
     setFormState((formState) => {
       // if error is false, remove it, else set to errors
@@ -124,6 +125,7 @@ export const useForm = <T extends object = any>(
     setValues,
     touch,
     getError,
+    hasError,
     setError,
     setErrors,
     setIsSubmitted,

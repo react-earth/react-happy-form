@@ -1,10 +1,11 @@
 import React from 'react';
 import { useFormContext } from 'react-happy-form';
 import ReactJson from 'react-json-view';
+import { ExampleFormValues } from './Example';
 
 export const FormStatePreview = () => {
   const { values, errors, touched, isSubmitted, isSubmitting } =
-    useFormContext();
+    useFormContext<ExampleFormValues>();
 
   return (
     <ReactJson
