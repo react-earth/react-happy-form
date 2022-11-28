@@ -1,10 +1,20 @@
-import { FormEvent, useEffect, useState } from 'react';
-import { FormErrors, FormField, Path, PromiseAble } from '../types';
+import { FormEvent, useEffect, useRef, useState } from 'react';
+import {
+  FormErrors,
+  FormField,
+  FormFieldRefs,
+  Path,
+  PromiseAble,
+} from '../types';
 import { set, get } from '../utils';
 
 type UseFormOptions<T extends object> = {
   defaultValues?: T;
   validate?: (values: T) => PromiseAble<FormErrors<T>>;
+};
+
+type FieldOptions = {
+  withoutRef?: boolean;
 };
 
 export const useForm = <T extends object = any>(
@@ -19,6 +29,8 @@ export const useForm = <T extends object = any>(
     isSubmitted: false,
     isSubmitting: false,
   });
+
+  const fieldRefs = useRef<FormFieldRefs<T>>({});
 
   const getValue = (path: Path<T>) => get(formState.values, path);
   const setValue = (path: Path<T>, value: any) => {
@@ -64,6 +76,10 @@ export const useForm = <T extends object = any>(
       return { ...formState, errors };
     });
   };
+  const getFieldRef = (path: Path<T>) => fieldRefs.current[path];
+  const setFieldRef = (path: Path<T>, ref: any) => {
+    fieldRefs.current[path] = ref;
+  };
   const setIsSubmitted = (isSubmitted: boolean) => {
     setFormState((formState) => {
       return { ...formState, isSubmitted };
@@ -106,6 +122,10 @@ export const useForm = <T extends object = any>(
         setErrors(errors);
         if (errors.size === 0) {
           await onSubmit(formState.values);
+        } else {
+          // auto focus first invalid field
+          const [firstInvalidPath] = errors.entries().next().value;
+          fieldRefs.current[firstInvalidPath as Path<T>]?.focus?.();
         }
       } finally {
         setIsSubmitted(true);
@@ -115,10 +135,13 @@ export const useForm = <T extends object = any>(
 
   return {
     ...formState,
-    field: (path: Path<T>): FormField => ({
+    field: (path: Path<T>, options?: FieldOptions): FormField => ({
       value: getValue(path),
       onChange: (value: any) => setValue(path, value),
       onBlur: () => touch(path),
+      ref: options?.withoutRef
+        ? undefined
+        : (ref: any) => setFieldRef(path, ref),
     }),
     getValue,
     setValue,
@@ -128,6 +151,9 @@ export const useForm = <T extends object = any>(
     hasError,
     setError,
     setErrors,
+    fieldRefs: fieldRefs.current,
+    getFieldRef,
+    setFieldRef,
     setIsSubmitted,
     setIsSubmitting,
     handleSubmit,

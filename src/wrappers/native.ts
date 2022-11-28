@@ -18,6 +18,7 @@ export const native = (field: FormField, options?: NativeOptions) => {
         onChange: () => {
           field.onChange(options?.value);
         },
+        ref: undefined,
       };
     case 'checkbox':
       const fieldValue: any[] = field.value || [];
@@ -33,6 +34,7 @@ export const native = (field: FormField, options?: NativeOptions) => {
               : [...fieldValue, options?.value],
           );
         },
+        ref: undefined,
       };
     default:
       return {

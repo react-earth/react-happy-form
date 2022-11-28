@@ -11,3 +11,5 @@ export type FormField = {
 
 // use map (not object) to keep errors order
 export type FormErrors<T> = Map<Path<T>, any>;
+
+export type FormFieldRefs<T> = Record<Path<T>, any>;
