@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { FormErrors, FormField, Path, PromiseAble } from '../types';
 import { set, get } from '../utils';
 
@@ -14,7 +14,7 @@ export const useForm = <T extends object = any>(
 
   const [formState, setFormState] = useState({
     values: defaultValues ?? ({} as T),
-    errors: {} as FormErrors<T>,
+    errors: new Map() as FormErrors<T>,
     touched: [] as Path<T>[],
     isSubmitted: false,
     isSubmitting: false,
@@ -42,10 +42,20 @@ export const useForm = <T extends object = any>(
       }
     });
   };
-  const getError = (path: Path<T>) => get(formState.errors, path);
-  const setError = (path: Path<T>, error: any) => {
+  const getError = (path: Path<T>) => formState.errors.get(path);
+  const setError = (path: Path<T>, error?: any) => {
     setFormState((formState) => {
-      return { ...formState, errors: { ...formState.errors, [path]: error } };
+      // if error is false, remove it, else set to errors
+      const newErrors = new Map(formState.errors);
+      if (error) {
+        newErrors.set(path, error);
+      } else {
+        newErrors.delete(path);
+      }
+      return {
+        ...formState,
+        errors: newErrors,
+      };
     });
   };
   const setErrors = (errors: FormErrors<T>) => {
@@ -71,10 +81,12 @@ export const useForm = <T extends object = any>(
         if (formState.isSubmitted) {
           setErrors(errors);
         } else {
-          const touchedErrors: FormErrors<T> = {};
-          formState.touched.forEach((touchedPath) => {
-            if (errors[touchedPath]) {
-              touchedErrors[touchedPath] = errors[touchedPath];
+          // if is not submitted, only set errors on touched fields
+          const touchedErrors: FormErrors<T> = new Map();
+          formState.touched.forEach((path) => {
+            const pathError = errors.get(path);
+            if (pathError) {
+              touchedErrors.set(path, pathError);
             }
           });
           setErrors(touchedErrors);
@@ -84,12 +96,14 @@ export const useForm = <T extends object = any>(
   }, [formState.isSubmitted, formState.touched, formState.values]);
 
   const handleSubmit =
-    (onSubmit: (values: T) => PromiseAble<void>) => async () => {
+    (onSubmit: (values: T) => PromiseAble<void>) =>
+    async (event?: FormEvent) => {
+      event?.preventDefault?.();
       try {
         setIsSubmitting(true);
-        const errors = (await validate?.(formState.values)) || {};
+        const errors = (await validate?.(formState.values)) || new Map();
         setErrors(errors);
-        if (Object.keys(errors).length === 0) {
+        if (errors.size === 0) {
           await onSubmit(formState.values);
         }
       } finally {
