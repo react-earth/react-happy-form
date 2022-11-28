@@ -11,7 +11,8 @@ export const FormStatePreview = () => {
       name="form"
       src={{
         values,
-        errors,
+        // convert errors (map) to object
+        errors: Object.fromEntries(errors),
         touched,
         isSubmitted,
         isSubmitting,
