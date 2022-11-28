@@ -15,7 +15,6 @@ export const useForm = <T extends object = any>(
   const [formState, setFormState] = useState({
     values: defaultValues ?? ({} as T),
     errors: new Map() as FormErrors<T>,
-    // refs: {} as Record<Path<T>, any>,
     touched: [] as Path<T>[],
     isSubmitted: false,
     isSubmitting: false,
@@ -99,10 +98,8 @@ export const useForm = <T extends object = any>(
   const handleSubmit =
     (onSubmit: (values: T) => PromiseAble<void>) =>
     async (event?: FormEvent) => {
-      console.log(event);
       event?.preventDefault?.();
       try {
-        console.log(1);
         setIsSubmitting(true);
         const errors = (await validate?.(formState.values)) || new Map();
         setErrors(errors);
@@ -110,7 +107,6 @@ export const useForm = <T extends object = any>(
           await onSubmit(formState.values);
         }
       } finally {
-        console.log(2);
         setIsSubmitted(true);
         setIsSubmitting(false);
       }
@@ -122,7 +118,6 @@ export const useForm = <T extends object = any>(
       value: getValue(path),
       onChange: (value: any) => setValue(path, value),
       onBlur: () => touch(path),
-      // ref: (ref: any) => setR
     }),
     getValue,
     setValue,
