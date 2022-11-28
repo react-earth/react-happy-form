@@ -45,18 +45,9 @@ export const Example = () => {
       return errors;
     },
   });
-  const {
-    field,
-    isSubmitting,
-    handleSubmit,
-    hasError,
-    getError,
-    fieldRefs,
-    setFieldRef,
-  } = form;
+  const { field, isSubmitting, handleSubmit, hasError, getError, setFieldRef } =
+    form;
   const toast = useToast();
-
-  console.log(fieldRefs);
 
   const onSubmit = async (values: ExampleFormValues) => {
     // wait 1s for submitting
