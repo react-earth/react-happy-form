@@ -45,7 +45,8 @@ export const Example = () => {
       return errors;
     },
   });
-  const { field, isSubmitting, handleSubmit, hasError, getError } = form;
+  const { field, isSubmitting, handleSubmit, hasError, getError, setFieldRef } =
+    form;
   const toast = useToast();
 
   const onSubmit = async (values: ExampleFormValues) => {
@@ -83,7 +84,7 @@ export const Example = () => {
                 </FormControl>
                 <FormControl>
                   <FormLabel>Sex</FormLabel>
-                  <RadioGroup {...field('sex')}>
+                  <RadioGroup {...field('sex', { withoutRef: true })}>
                     <Stack direction="row" gap="2">
                       <Radio value="male">Male</Radio>
                       <Radio value="female">Female</Radio>
@@ -92,9 +93,13 @@ export const Example = () => {
                 </FormControl>
                 <FormControl isRequired isInvalid={hasError('hobbies')}>
                   <FormLabel>Hobbies</FormLabel>
-                  <CheckboxGroup {...field('hobbies')}>
+                  <CheckboxGroup {...field('hobbies', { withoutRef: true })}>
                     <Stack direction="row" gap="2">
-                      <Checkbox value="swimming" required={false}>
+                      <Checkbox
+                        value="swimming"
+                        required={false}
+                        ref={(ref) => setFieldRef('hobbies', ref)}
+                      >
                         Swimming
                       </Checkbox>
                       <Checkbox value="running" required={false}>
