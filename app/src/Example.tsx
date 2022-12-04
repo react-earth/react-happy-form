@@ -6,20 +6,33 @@ import {
   Flex,
   Heading,
   Spacer,
-  FormControl,
   Input,
-  FormLabel,
-  RadioGroup,
   Stack,
   Radio,
-  CheckboxGroup,
   Checkbox,
   Select,
   Button,
   useToast,
-  FormErrorMessage,
 } from '@chakra-ui/react';
-import { FormStatePreview } from './FormStatePreview';
+import { FormStatePreview } from './components/FormStatePreview';
+import { Form } from './components/Form';
+import { FormItem } from './components/FormItem';
+
+const RADIO_ITEMS = [
+  { label: 'Male', value: 'male' },
+  { label: 'Female', value: 'female' },
+];
+
+const CHECKBOX_ITEMS = [
+  { label: 'Swimming', value: 'swimming' },
+  { label: 'Running', value: 'running' },
+];
+
+const SELECT_ITEMS = [
+  { label: 'Everyone can view', value: 'public' },
+  { label: 'Your friends can view', value: 'friends' },
+  { label: 'Only your can view', value: 'private' },
+];
 
 export type ExampleFormValues = {
   name?: string;
@@ -44,6 +57,8 @@ export const Example = () => {
       }
       return errors;
     },
+    validateOnTouched: true,
+    focusOnValidateFailed: true,
   });
   const { field, isSubmitting, handleSubmit, hasError, getError, setFieldRef } =
     form;
@@ -53,7 +68,7 @@ export const Example = () => {
     // wait 1s for submitting
     await new Promise((resolve) => {
       setTimeout(() => {
-        resolve(undefined);
+        resolve(values);
       }, 1000);
     });
     toast({
@@ -71,65 +86,69 @@ export const Example = () => {
           <Box flex="1">
             <Heading fontSize="3xl">React Happy Form</Heading>
             <Spacer h="6" />
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Stack gap="4">
-                <FormControl isRequired isInvalid={hasError('name')}>
-                  <FormLabel>Name</FormLabel>
-                  <Input
-                    {...native(field('name'))}
-                    placeholder="Please enter your name"
-                    required={false}
-                  />
-                  <FormErrorMessage>{getError('name')}</FormErrorMessage>
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Sex</FormLabel>
-                  <RadioGroup {...field('sex', { withoutRef: true })}>
-                    <Stack direction="row" gap="2">
-                      <Radio value="male">Male</Radio>
-                      <Radio value="female">Female</Radio>
-                    </Stack>
-                  </RadioGroup>
-                </FormControl>
-                <FormControl isRequired isInvalid={hasError('hobbies')}>
-                  <FormLabel>Hobbies</FormLabel>
-                  <CheckboxGroup {...field('hobbies', { withoutRef: true })}>
-                    <Stack direction="row" gap="2">
-                      <Checkbox
-                        value="swimming"
-                        required={false}
-                        ref={(ref) => setFieldRef('hobbies', ref)}
-                      >
-                        Swimming
-                      </Checkbox>
-                      <Checkbox value="running" required={false}>
-                        Running
-                      </Checkbox>
-                      <Checkbox value="basketball" required={false}>
-                        Basketball
-                      </Checkbox>
-                    </Stack>
-                  </CheckboxGroup>
-                  <FormErrorMessage>{getError('hobbies')}</FormErrorMessage>
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Privacy</FormLabel>
-                  <Select {...native(field('privacy'))}>
-                    <option value="public">Everyone can view</option>
-                    <option value="friends">Your friends can view</option>
-                    <option value="private">Only your can view</option>
-                  </Select>
-                </FormControl>
-                <Button
-                  isLoading={isSubmitting}
-                  loadingText="Submitting"
-                  colorScheme="green"
-                  type="submit"
+            <Form onSubmit={handleSubmit(onSubmit)}>
+              <FormItem label="Name" required error={getError('name')}>
+                <Input
+                  {...native(field('name'))}
+                  placeholder="Please enter your name"
+                  isInvalid={hasError('name')}
+                />
+              </FormItem>
+              <FormItem label="Sex" required error={getError('sex')}>
+                <Stack direction="row" gap="2">
+                  {RADIO_ITEMS.map((item) => (
+                    <Radio
+                      key={item.value}
+                      {...native(field('sex'), {
+                        type: 'radio',
+                        value: item.value,
+                        valueKey: 'isChecked',
+                      })}
+                      isInvalid={hasError('sex')}
+                    >
+                      {item.label}
+                    </Radio>
+                  ))}
+                </Stack>
+              </FormItem>
+              <FormItem label="Hobbies" required error={getError('hobbies')}>
+                <Stack direction="row" gap="2">
+                  {CHECKBOX_ITEMS.map((item) => (
+                    <Checkbox
+                      key={item.value}
+                      {...native(field('hobbies'), {
+                        type: 'checkbox',
+                        value: item.value,
+                        valueKey: 'isChecked',
+                      })}
+                      isInvalid={hasError('hobbies')}
+                    >
+                      {item.label}
+                    </Checkbox>
+                  ))}
+                </Stack>
+              </FormItem>
+              <FormItem label="Privacy" required error={getError('privacy')}>
+                <Select
+                  {...native(field('privacy'))}
+                  isInvalid={hasError('privacy')}
                 >
-                  Submit
-                </Button>
-              </Stack>
-            </form>
+                  {SELECT_ITEMS.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </Select>
+              </FormItem>
+              <Button
+                isLoading={isSubmitting}
+                loadingText="Submitting"
+                colorScheme="green"
+                type="submit"
+              >
+                Submit
+              </Button>
+            </Form>
           </Box>
           <Box flex="1">
             <Heading fontSize="3xl">Form State Preview</Heading>

@@ -11,19 +11,18 @@ import { set, get } from '../utils';
 type UseFormOptions<T extends object> = {
   defaultValues?: T;
   validate?: (values: T) => PromiseAble<FormErrors<T>>;
-};
-
-type FieldOptions = {
-  withoutRef?: boolean;
+  validateOnTouched?: boolean;
+  focusOnValidateFailed?: boolean;
 };
 
 export const useForm = <T extends object = any>(
   options?: UseFormOptions<T>,
 ) => {
-  const { defaultValues, validate } = options || {};
+  const { defaultValues, validate, validateOnTouched, focusOnValidateFailed } =
+    options || {};
 
   const [formState, setFormState] = useState({
-    values: defaultValues ?? ({} as T),
+    values: (defaultValues ?? {}) as T,
     errors: new Map() as FormErrors<T>,
     touched: [] as Path<T>[],
     isSubmitted: false,
@@ -76,9 +75,29 @@ export const useForm = <T extends object = any>(
       return { ...formState, errors };
     });
   };
-  const getFieldRef = (path: Path<T>) => fieldRefs.current[path];
-  const setFieldRef = (path: Path<T>, ref: any) => {
-    fieldRefs.current[path] = ref;
+  const getFieldRef = (path: Path<T>) => {
+    const fieldRef = fieldRefs.current[path] as any;
+    if (fieldRef instanceof Map) {
+      // get first item if fieldRef is map
+      return fieldRef.values().next().value;
+    } else {
+      return fieldRef;
+    }
+  };
+  const setFieldRef = (path: Path<T>, ref: any, refKey?: any) => {
+    if (refKey) {
+      // fieldRef as map if exists refKey
+      if (!fieldRefs.current[path]) {
+        fieldRefs.current[path] = new Map();
+      }
+      if (ref) {
+        fieldRefs.current[path].set(refKey, ref);
+      } else {
+        fieldRefs.current[path].delete(refKey);
+      }
+    } else {
+      fieldRefs.current[path] = ref;
+    }
   };
   const setIsSubmitted = (isSubmitted: boolean) => {
     setFormState((formState) => {
@@ -122,10 +141,10 @@ export const useForm = <T extends object = any>(
         setErrors(errors);
         if (errors.size === 0) {
           await onSubmit(formState.values);
-        } else {
-          // auto focus first invalid field
-          const [firstInvalidPath] = errors.entries().next().value;
-          fieldRefs.current[firstInvalidPath as Path<T>]?.focus?.();
+        } else if (focusOnValidateFailed) {
+          // focus first invalid field
+          const firstInvalidPath = errors.keys().next().value;
+          getFieldRef(firstInvalidPath)?.focus?.();
         }
       } finally {
         setIsSubmitted(true);
@@ -135,13 +154,13 @@ export const useForm = <T extends object = any>(
 
   return {
     ...formState,
-    field: (path: Path<T>, options?: FieldOptions): FormField => ({
+    field: (path: Path<T>): FormField => ({
       value: getValue(path),
       onChange: (value: any) => setValue(path, value),
-      onBlur: () => touch(path),
-      ref: options?.withoutRef
-        ? undefined
-        : (ref: any) => setFieldRef(path, ref),
+      onBlur: validateOnTouched ? () => touch(path) : undefined,
+      ref: focusOnValidateFailed
+        ? (ref: any, refKey?: any) => setFieldRef(path, ref, refKey)
+        : undefined,
     }),
     getValue,
     setValue,
