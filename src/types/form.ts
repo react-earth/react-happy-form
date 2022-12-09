@@ -5,7 +5,7 @@ export type FormField = {
   onChange: (value: any) => void;
   // use for trigger touched flag
   onBlur?: () => void;
-  // use for auto focus validate error field component
+  // use for focus first field when validate failed
   ref?: any;
 };
 
