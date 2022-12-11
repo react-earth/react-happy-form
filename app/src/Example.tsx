@@ -47,7 +47,7 @@ export const Example = () => {
       sex: 'male',
       privacy: 'public',
     },
-    validate: (values) => {
+    onValidate: (values) => {
       const errors: FormErrors<ExampleFormValues> = new Map();
       if (!values.name) {
         errors.set('name', 'Name is required');
@@ -57,26 +57,24 @@ export const Example = () => {
       }
       return errors;
     },
-    validateOnTouched: true,
-    focusOnValidateFailed: true,
+    onSubmit: async (values: ExampleFormValues) => {
+      // wait 1s for submitting
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(values);
+        }, 1000);
+      });
+      toast({
+        title: 'Form submit successfully!',
+        position: 'top',
+        status: 'success',
+      });
+    },
+    isValidateOnTouched: true,
+    isFocusOnValidateFailed: true,
   });
-  const { field, isSubmitting, handleSubmit, hasError, getError, setFieldRef } =
-    form;
+  const { field, submit, hasError, getError, isSubmitting } = form;
   const toast = useToast();
-
-  const onSubmit = async (values: ExampleFormValues) => {
-    // wait 1s for submitting
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(values);
-      }, 1000);
-    });
-    toast({
-      title: 'Form submit successfully!',
-      position: 'top',
-      status: 'success',
-    });
-  };
 
   return (
     <FormProvider value={form}>
@@ -86,7 +84,7 @@ export const Example = () => {
           <Box flex="1">
             <Heading fontSize="3xl">React Happy Form</Heading>
             <Spacer h="6" />
-            <Form onSubmit={handleSubmit(onSubmit)}>
+            <Form onSubmit={submit}>
               <FormItem label="Name" required error={getError('name')}>
                 <Input
                   {...native(field('name'))}
