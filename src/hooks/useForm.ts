@@ -10,16 +10,22 @@ import { set, get } from '../utils';
 
 type UseFormOptions<T extends object> = {
   defaultValues?: T;
-  validate?: (values: T) => PromiseAble<FormErrors<T>>;
-  validateOnTouched?: boolean;
-  focusOnValidateFailed?: boolean;
+  onValidate?: (values: T) => PromiseAble<FormErrors<T>>;
+  onSubmit?: (values: T) => PromiseAble<void>;
+  isValidateOnTouched?: boolean;
+  isFocusOnValidateFailed?: boolean;
 };
 
 export const useForm = <T extends object = any>(
   options?: UseFormOptions<T>,
 ) => {
-  const { defaultValues, validate, validateOnTouched, focusOnValidateFailed } =
-    options || {};
+  const {
+    defaultValues,
+    onValidate,
+    onSubmit,
+    isValidateOnTouched,
+    isFocusOnValidateFailed,
+  } = options || {};
 
   const [formState, setFormState] = useState({
     values: (defaultValues ?? {}) as T,
@@ -84,19 +90,23 @@ export const useForm = <T extends object = any>(
       return fieldRef;
     }
   };
-  const setFieldRef = (path: Path<T>, ref: any, refKey?: any) => {
-    if (refKey) {
+  const setFieldRef = (path: Path<T>, ref: any, refMapKey?: any) => {
+    if (refMapKey) {
       // fieldRef as map if exists refKey
       if (!fieldRefs.current[path]) {
         fieldRefs.current[path] = new Map();
       }
       if (ref) {
-        fieldRefs.current[path].set(refKey, ref);
+        fieldRefs.current[path].set(refMapKey, ref);
       } else {
-        fieldRefs.current[path].delete(refKey);
+        fieldRefs.current[path].delete(refMapKey);
       }
     } else {
-      fieldRefs.current[path] = ref;
+      if (ref) {
+        fieldRefs.current[path] = ref;
+      } else {
+        delete fieldRefs.current[path];
+      }
     }
   };
   const setIsSubmitted = (isSubmitted: boolean) => {
@@ -110,10 +120,30 @@ export const useForm = <T extends object = any>(
     });
   };
 
+  const submit = async (event?: FormEvent) => {
+    event?.preventDefault?.();
+    try {
+      setIsSubmitting(true);
+      const errors = (await onValidate?.(formState.values)) || new Map();
+      setErrors(errors);
+      if (errors.size === 0) {
+        await onSubmit?.(formState.values);
+      } else if (isFocusOnValidateFailed) {
+        // focus first invalid field
+        const firstInvalidPath = errors.keys().next().value;
+        getFieldRef(firstInvalidPath)?.focus?.();
+      }
+    } finally {
+      setIsSubmitted(true);
+      setIsSubmitting(false);
+    }
+  };
+
+  // validation
   useEffect(() => {
     (async () => {
-      if (validate) {
-        const errors = await validate(formState.values);
+      if (onValidate) {
+        const errors = await onValidate(formState.values);
         if (formState.isSubmitted) {
           setErrors(errors);
         } else {
@@ -131,35 +161,14 @@ export const useForm = <T extends object = any>(
     })();
   }, [formState.isSubmitted, formState.touched, formState.values]);
 
-  const handleSubmit =
-    (onSubmit: (values: T) => PromiseAble<void>) =>
-    async (event?: FormEvent) => {
-      event?.preventDefault?.();
-      try {
-        setIsSubmitting(true);
-        const errors = (await validate?.(formState.values)) || new Map();
-        setErrors(errors);
-        if (errors.size === 0) {
-          await onSubmit(formState.values);
-        } else if (focusOnValidateFailed) {
-          // focus first invalid field
-          const firstInvalidPath = errors.keys().next().value;
-          getFieldRef(firstInvalidPath)?.focus?.();
-        }
-      } finally {
-        setIsSubmitted(true);
-        setIsSubmitting(false);
-      }
-    };
-
   return {
     ...formState,
     field: (path: Path<T>): FormField => ({
       value: getValue(path),
       onChange: (value: any) => setValue(path, value),
-      onBlur: validateOnTouched ? () => touch(path) : undefined,
-      ref: focusOnValidateFailed
-        ? (ref: any, refKey?: any) => setFieldRef(path, ref, refKey)
+      onBlur: isValidateOnTouched ? () => touch(path) : undefined,
+      ref: isFocusOnValidateFailed
+        ? (ref: any, refMapKey?: any) => setFieldRef(path, ref, refMapKey)
         : undefined,
     }),
     getValue,
@@ -175,7 +184,7 @@ export const useForm = <T extends object = any>(
     setFieldRef,
     setIsSubmitted,
     setIsSubmitting,
-    handleSubmit,
+    submit,
   };
 };
 
