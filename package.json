@@ -24,7 +24,8 @@
     "app-start": "npm --prefix=app start",
     "app-build": "npm --prefix=app run build",
     "test": "jest",
-    "e2e": "cypress run"
+    "e2e": "cypress run",
+    "release": "release-it"
   },
   "peerDependencies": {
     "react": ">=16.0.0"
@@ -46,6 +47,7 @@
     "jest-environment-jsdom": "^29.2.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "release-it": "^15.6.0",
     "rimraf": "^3.0.0",
     "rollup": "^2.70.1",
     "rollup-plugin-dts": "^4.2.0",
