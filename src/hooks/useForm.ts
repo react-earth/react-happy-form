@@ -16,6 +16,11 @@ type UseFormOptions<T extends object> = {
   isFocusOnValidateFailed?: boolean;
 };
 
+type FieldOptions = {
+  onBlur?: boolean;
+  ref?: boolean;
+};
+
 export const useForm = <T extends object = any>(
   options?: UseFormOptions<T>,
 ) => {
@@ -90,23 +95,11 @@ export const useForm = <T extends object = any>(
       return fieldRef;
     }
   };
-  const setFieldRef = (path: Path<T>, ref: any, refMapKey?: any) => {
-    if (refMapKey) {
-      // fieldRef as map if exists refKey
-      if (!fieldRefs.current[path]) {
-        fieldRefs.current[path] = new Map();
-      }
-      if (ref) {
-        fieldRefs.current[path].set(refMapKey, ref);
-      } else {
-        fieldRefs.current[path].delete(refMapKey);
-      }
+  const setFieldRef = (path: Path<T>, ref: any) => {
+    if (ref) {
+      fieldRefs.current[path] = ref;
     } else {
-      if (ref) {
-        fieldRefs.current[path] = ref;
-      } else {
-        delete fieldRefs.current[path];
-      }
+      delete fieldRefs.current[path];
     }
   };
   const setIsSubmitted = (isSubmitted: boolean) => {
@@ -163,13 +156,15 @@ export const useForm = <T extends object = any>(
 
   return {
     ...formState,
-    field: (path: Path<T>): FormField => ({
+    field: (path: Path<T>, options?: FieldOptions): FormField => ({
       value: getValue(path),
       onChange: (value: any) => setValue(path, value),
-      onBlur: isValidateOnTouched ? () => touch(path) : undefined,
-      ref: isFocusOnValidateFailed
-        ? (ref: any, refMapKey?: any) => setFieldRef(path, ref, refMapKey)
-        : undefined,
+      onBlur:
+        options?.onBlur ?? isValidateOnTouched ? () => touch(path) : undefined,
+      ref:
+        options?.ref ?? isFocusOnValidateFailed
+          ? (ref: any) => setFieldRef(path, ref)
+          : undefined,
     }),
     getValue,
     setValue,
