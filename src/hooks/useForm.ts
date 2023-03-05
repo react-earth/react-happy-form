@@ -8,18 +8,19 @@ import {
 } from '../types';
 import { set, get } from '../utils';
 
-type UseFormOptions<T extends object> = {
+type UseFormOptions<T extends object = any> = {
   defaultValues?: T;
   onValidate?: (values: T) => PromiseAble<FormErrors<T>>;
   onSubmit?: (values: T) => PromiseAble<void>;
-  isValidateOnTouched?: boolean;
-  isFocusOnValidateFailed?: boolean;
+  isValidateOnChange?: boolean;
+  isValidateAfterTouch?: boolean;
+  isAutoFocus?: boolean;
 };
 
-type FieldOptions = {
-  onBlur?: boolean;
-  ref?: boolean;
-};
+type FieldOptions = Pick<
+  UseFormOptions,
+  'isValidateAfterTouch' | 'isAutoFocus'
+>;
 
 export const useForm = <T extends object = any>(
   options?: UseFormOptions<T>,
@@ -28,8 +29,9 @@ export const useForm = <T extends object = any>(
     defaultValues,
     onValidate,
     onSubmit,
-    isValidateOnTouched,
-    isFocusOnValidateFailed,
+    isValidateOnChange,
+    isValidateAfterTouch,
+    isAutoFocus,
   } = options || {};
 
   const [formState, setFormState] = useState({
@@ -86,15 +88,7 @@ export const useForm = <T extends object = any>(
       return { ...formState, errors };
     });
   };
-  const getFieldRef = (path: Path<T>) => {
-    const fieldRef = fieldRefs.current[path] as any;
-    if (fieldRef instanceof Map) {
-      // get first item if fieldRef is map
-      return fieldRef.values().next().value;
-    } else {
-      return fieldRef;
-    }
-  };
+  const getFieldRef = (path: Path<T>) => fieldRefs.current[path];
   const setFieldRef = (path: Path<T>, ref: any) => {
     if (ref) {
       fieldRefs.current[path] = ref;
@@ -121,7 +115,7 @@ export const useForm = <T extends object = any>(
       setErrors(errors);
       if (errors.size === 0) {
         await onSubmit?.(formState.values);
-      } else if (isFocusOnValidateFailed) {
+      } else if (isAutoFocus) {
         // focus first invalid field
         const firstInvalidPath = errors.keys().next().value;
         getFieldRef(firstInvalidPath)?.focus?.();
@@ -132,10 +126,10 @@ export const useForm = <T extends object = any>(
     }
   };
 
-  // validation
+  // validate on change
   useEffect(() => {
     (async () => {
-      if (onValidate) {
+      if (isValidateOnChange && onValidate) {
         const errors = await onValidate(formState.values);
         if (formState.isSubmitted) {
           setErrors(errors);
@@ -154,18 +148,22 @@ export const useForm = <T extends object = any>(
     })();
   }, [formState.isSubmitted, formState.touched, formState.values]);
 
+  const field = (path: Path<T>, options?: FieldOptions): FormField => ({
+    value: getValue(path),
+    onChange: (value: any) => setValue(path, value),
+    onBlur:
+      options?.isValidateAfterTouch ?? isValidateAfterTouch
+        ? () => touch(path)
+        : undefined,
+    ref:
+      options?.isAutoFocus ?? isAutoFocus
+        ? (ref: any) => setFieldRef(path, ref)
+        : undefined,
+  });
+
   return {
     ...formState,
-    field: (path: Path<T>, options?: FieldOptions): FormField => ({
-      value: getValue(path),
-      onChange: (value: any) => setValue(path, value),
-      onBlur:
-        options?.onBlur ?? isValidateOnTouched ? () => touch(path) : undefined,
-      ref:
-        options?.ref ?? isFocusOnValidateFailed
-          ? (ref: any) => setFieldRef(path, ref)
-          : undefined,
-    }),
+    field,
     getValue,
     setValue,
     setValues,
