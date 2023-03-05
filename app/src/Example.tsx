@@ -60,8 +60,9 @@ export const Example = () => {
         }, 1000);
       });
     },
-    isValidateOnTouched: true,
-    isFocusOnValidateFailed: true,
+    isValidateOnChange: true,
+    isValidateAfterTouch: true,
+    isAutoFocus: true,
   });
   const { field, submit, hasError, getError, isSubmitting } = form;
   const toast = useToast();
@@ -87,7 +88,7 @@ export const Example = () => {
                   </FormControl>
                   <FormControl isRequired isInvalid={hasError('gender')}>
                     <FormLabel>Gender</FormLabel>
-                    <RadioGroup {...field('gender', { ref: false })}>
+                    <RadioGroup {...field('gender', { isAutoFocus: false })}>
                       <HStack spacing={4}>
                         <Radio value="male">Male</Radio>
                         <Radio value="female">Female</Radio>
@@ -97,7 +98,9 @@ export const Example = () => {
                   </FormControl>
                   <FormControl isRequired isInvalid={hasError('hobbies')}>
                     <FormLabel>Hobbies</FormLabel>
-                    <CheckboxGroup {...field('hobbies', { ref: false })}>
+                    <CheckboxGroup
+                      {...field('hobbies', { isAutoFocus: false })}
+                    >
                       <HStack spacing={4}>
                         <Checkbox value="swimming">Swimming</Checkbox>
                         <Checkbox value="running">Running</Checkbox>
