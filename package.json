@@ -41,6 +41,7 @@
     "@types/jest": "^29.2.0",
     "@types/lodash": "^4.14.184",
     "@types/react": "^17.0.0",
+    "auto-changelog": "^2.4.0",
     "babel-jest": "^29.2.2",
     "cypress": "^10.11.0",
     "jest": "^29.2.2",
