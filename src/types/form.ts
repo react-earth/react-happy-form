@@ -1,11 +1,15 @@
 import { Path } from './path';
 
-export type FormField = {
-  value: any;
-  onChange: (value: any) => void;
-  // use for trigger touched flag
+export type StandardFieldRef = {
+  focus: () => void;
+};
+
+export type StandardFieldProps<T = any> = {
+  value: T;
+  onChange: (value: T) => void;
+  // use for validate after touched
   onBlur?: () => void;
-  // use for focus first field when validate failed
+  // use for auto focus
   ref?: any;
 };
 
