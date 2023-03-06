@@ -1,12 +1,12 @@
-import { FormField } from '../types';
+import { StandardFieldProps } from '../types';
 
-export const native = (field: FormField) => {
+export const native = (props: StandardFieldProps) => {
   return {
-    ...field,
-    value: field.value ?? '',
+    ...props,
+    value: props.value ?? '',
     // use any to support native like event
     onChange: (event: any) => {
-      field.onChange(event.target.value);
+      props.onChange(event.target.value);
     },
   };
 };

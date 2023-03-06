@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import {
   FormErrors,
-  FormField,
+  StandardFieldProps,
   FormFieldRefs,
   Path,
   PromiseAble,
@@ -148,7 +148,10 @@ export const useForm = <T extends object = any>(
     })();
   }, [formState.isSubmitted, formState.touched, formState.values]);
 
-  const field = (path: Path<T>, options?: FieldOptions): FormField => ({
+  const field = (
+    path: Path<T>,
+    options?: FieldOptions,
+  ): StandardFieldProps => ({
     value: getValue(path),
     onChange: (value: any) => setValue(path, value),
     onBlur:
