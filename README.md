@@ -21,11 +21,11 @@
 
 # Quick Features 🥳
 
-- Use hooks to manager your form state, support nested form.
+- Use hooks to manage your form state, support nested form.
 - Support third-party UI and validation packages, e.g. MUI, Chakra UI, Yup...
 - Powerful and configurable validation.
-- Built on typescript, provides type protection, more robust.
-- No dependencies, very small package size.
+- Built with typescript, provides type protection, make your app more robust.
+- Small package size.
 
 # Competitor Comparison 🏅
 

@@ -1,14 +1,13 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
+import { Path, PathValue, pathGet, pathSet } from 'object-standard-path';
 import {
   FormErrors,
   StandardFieldProps,
   FormFieldRefs,
-  Path,
   PromiseAble,
 } from '../types';
-import { set, get } from '../utils';
 
-type UseFormOptions<T extends object = any> = {
+type UseFormOptions<T = any> = {
   defaultValues?: T;
   onValidate?: (values: T) => PromiseAble<FormErrors<T>>;
   onSubmit?: (values: T) => PromiseAble<void>;
@@ -22,9 +21,7 @@ type FieldOptions = Pick<
   'isValidateAfterTouch' | 'isAutoFocus'
 >;
 
-export const useForm = <T extends object = any>(
-  options?: UseFormOptions<T>,
-) => {
+export const useForm = <T = any>(options?: UseFormOptions<T>) => {
   const {
     defaultValues,
     onValidate,
@@ -35,7 +32,7 @@ export const useForm = <T extends object = any>(
   } = options || {};
 
   const [formState, setFormState] = useState({
-    values: (defaultValues ?? {}) as T,
+    values: defaultValues as T,
     errors: new Map() as FormErrors<T>,
     touched: [] as Path<T>[],
     isSubmitted: false,
@@ -44,11 +41,12 @@ export const useForm = <T extends object = any>(
 
   const fieldRefs = useRef<FormFieldRefs<T>>({});
 
-  const getValue = (path: Path<T>) => get(formState.values, path);
-  const setValue = (path: Path<T>, value: any) => {
+  const getValue = <P extends Path<T>>(path: P) =>
+    pathGet(formState.values, path);
+  const setValue = <P extends Path<T>>(path: P, value: PathValue<T, P>) => {
     setFormState((formState) => {
       const newValues = { ...formState.values };
-      set(newValues, path, value);
+      pathSet(newValues, path, value);
       return { ...formState, values: newValues };
     });
   };
@@ -184,4 +182,4 @@ export const useForm = <T extends object = any>(
   };
 };
 
-export type Form<T extends object = any> = ReturnType<typeof useForm<T>>;
+export type Form<T = any> = ReturnType<typeof useForm<T>>;

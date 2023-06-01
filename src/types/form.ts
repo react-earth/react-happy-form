@@ -1,4 +1,4 @@
-import { Path } from './path';
+import { Path } from 'object-standard-path';
 
 export type StandardFieldRef = {
   focus: () => void;
@@ -15,5 +15,6 @@ export type StandardFieldProps<T = any> = {
 
 // use map (not object) to keep errors order
 export type FormErrors<T> = Map<Path<T>, any>;
-
-export type FormFieldRefs<T> = Record<Path<T>, any>;
+export type FormFieldRefs<T> = {
+  [K in Path<T>]?: any;
+};
