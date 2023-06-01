@@ -30,6 +30,9 @@
   "peerDependencies": {
     "react": ">=16.0.0"
   },
+  "dependencies": {
+    "object-standard-path": "^0.2.3"
+  },
   "devDependencies": {
     "@babel/core": "^7.19.6",
     "@babel/preset-env": "^7.19.4",
