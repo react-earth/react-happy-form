@@ -1,6 +1,4 @@
-# React Happy Form
-
-Simple, easy to use, powerful form state manage tools.
+![title](media/repo-header.svg)
 
 <a href="https://github.com/react-earth/react-happy-form" target="\_parent">
   <img alt="star" src="https://img.shields.io/github/stars/react-earth/react-happy-form.svg?style=social&label=Star" />
