@@ -18,7 +18,7 @@ Simple, easy to use, powerful form state manage tools.
   <img alt="license" src="https://img.shields.io/npm/l/react-happy-form" />
 </a>
 
-# Quick Features 🥳
+## Quick Features 🥳
 
 - Use hooks to manage your form state.
 - Powerful and configurable form validation.
@@ -26,7 +26,7 @@ Simple, easy to use, powerful form state manage tools.
 - Quick integration third-party UI and validation packages, e.g. MUI, Chakra UI, Yup...
 - less than 3kB page size.
 
-# Competitor Comparison 🏅
+## Competitor Comparison 🏅
 
 |                                            | React Happy Form | Formik | React Hook Form |
 | ------------------------------------------ | ---------------- | ------ | --------------- |
