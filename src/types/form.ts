@@ -14,7 +14,7 @@ export type StandardFieldProps<T = any> = {
 };
 
 // use map (not object) to keep errors order
-export type FormErrors<T> = Map<Path<T>, any>;
-export type FormFieldRefs<T> = {
+export type FormErrors<T extends object> = Map<Path<T>, any>;
+export type FormFieldRefs<T extends object> = {
   [K in Path<T>]?: any;
 };

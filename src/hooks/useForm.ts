@@ -1,5 +1,10 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { Path, PathValue, pathGet, pathSet } from 'object-standard-path';
+import {
+  Path,
+  PathValue,
+  pathGet,
+  pathSetImmutable,
+} from 'object-standard-path';
 import {
   FormErrors,
   StandardFieldProps,
@@ -7,7 +12,7 @@ import {
   PromiseAble,
 } from '../types';
 
-type UseFormOptions<T = any> = {
+type UseFormOptions<T extends object> = {
   defaultValues?: T;
   onValidate?: (values: T) => PromiseAble<FormErrors<T>>;
   onSubmit?: (values: T) => PromiseAble<void>;
@@ -16,12 +21,12 @@ type UseFormOptions<T = any> = {
   isAutoFocus?: boolean;
 };
 
-type FieldOptions = Pick<
-  UseFormOptions,
+type FieldOptions<T extends object> = Pick<
+  UseFormOptions<T>,
   'isValidateAfterTouch' | 'isAutoFocus'
 >;
 
-export const useForm = <T = any>(options?: UseFormOptions<T>) => {
+export const useForm = <T extends object>(options?: UseFormOptions<T>) => {
   const {
     defaultValues,
     onValidate,
@@ -32,7 +37,7 @@ export const useForm = <T = any>(options?: UseFormOptions<T>) => {
   } = options || {};
 
   const [formState, setFormState] = useState({
-    values: defaultValues as T,
+    values: (defaultValues ?? {}) as T,
     errors: new Map() as FormErrors<T>,
     touched: [] as Path<T>[],
     isSubmitted: false,
@@ -45,9 +50,10 @@ export const useForm = <T = any>(options?: UseFormOptions<T>) => {
     pathGet(formState.values, path);
   const setValue = <P extends Path<T>>(path: P, value: PathValue<T, P>) => {
     setFormState((formState) => {
-      const newValues = { ...formState.values };
-      pathSet(newValues, path, value);
-      return { ...formState, values: newValues };
+      return {
+        ...formState,
+        values: pathSetImmutable(formState.values, path, value),
+      };
     });
   };
   const setValues = (values: T) => {
@@ -148,19 +154,20 @@ export const useForm = <T = any>(options?: UseFormOptions<T>) => {
 
   const field = (
     path: Path<T>,
-    options?: FieldOptions,
-  ): StandardFieldProps => ({
-    value: getValue(path),
-    onChange: (value: any) => setValue(path, value),
-    onBlur:
-      options?.isValidateAfterTouch ?? isValidateAfterTouch
-        ? () => touch(path)
-        : undefined,
-    ref:
-      options?.isAutoFocus ?? isAutoFocus
-        ? (ref: any) => setFieldRef(path, ref)
-        : undefined,
-  });
+    options?: FieldOptions<T>,
+  ): StandardFieldProps => {
+    const props: StandardFieldProps = {
+      value: getValue(path),
+      onChange: (value: any) => setValue(path, value),
+    };
+    if (options?.isValidateAfterTouch ?? isValidateAfterTouch) {
+      props.onBlur = () => touch(path);
+    }
+    if (options?.isAutoFocus ?? isAutoFocus) {
+      props.ref = (ref: any) => setFieldRef(path, ref);
+    }
+    return props;
+  };
 
   return {
     ...formState,
@@ -182,4 +189,4 @@ export const useForm = <T = any>(options?: UseFormOptions<T>) => {
   };
 };
 
-export type Form<T = any> = ReturnType<typeof useForm<T>>;
+export type Form<T extends object> = ReturnType<typeof useForm<T>>;
