@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/npm/v/react-happy-form" alt="version">
 </a>
 <a href="https://www.npmjs.com/package/react-happy-form" target="\_parent">
-  <img alt="minzip" src="https://img.shields.io/bundlephobia/minzip/react-happy-form" />
+  <img alt="minzip" src="https://img.badgesize.io/https:/unpkg.com/react-happy-form@latest/dist/index.esm.js?compression=gzip" />
 </a>
 <a href="https://www.npmjs.com/package/react-happy-form" target="\_parent">
   <img alt="downloads" src="https://img.shields.io/npm/dm/react-happy-form.svg" />
