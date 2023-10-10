@@ -14,7 +14,7 @@ export type StandardFieldProps<T = any> = {
   ref?: any;
 };
 
-export type CovertToStandardField<T, P = any> = Override<
+export type CovertToStandardFieldProps<T, P = any> = Override<
   T,
   StandardFieldProps<P>
 >;
