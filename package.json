@@ -21,11 +21,10 @@
   "scripts": {
     "build": "rimraf dist && rollup -c && rimraf dist/types",
     "prepublishOnly": "npm run build",
-    "app-install": "npm --prefix=app install",
-    "app-start": "npm --prefix=app start",
-    "app-build": "npm --prefix=app run build",
     "test": "tsc --noEmit & jest",
-    "release": "release-it"
+    "release": "release-it",
+    "app:install": "npm --prefix=app install",
+    "app:start": "npm --prefix=app start"
   },
   "peerDependencies": {
     "react": ">=16.0.0"
