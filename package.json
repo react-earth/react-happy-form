@@ -24,7 +24,8 @@
     "test": "tsc --noEmit & jest",
     "release": "release-it",
     "app:install": "npm --prefix=app install",
-    "app:start": "npm --prefix=app start"
+    "app:start": "npm --prefix=app start",
+    "app:build": "npm --prefix=app run build"
   },
   "peerDependencies": {
     "react": ">=16.0.0"
